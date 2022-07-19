@@ -2,6 +2,7 @@ import httpStatus from 'http-status';
 import { logger } from '../../services';
 import Response from '../../helpers/response';
 import authService from './auth.service';
+import User from '../users/users.model';
 
 export const signup = async (req, res, next) => {
   try {
@@ -9,17 +10,33 @@ export const signup = async (req, res, next) => {
     const result = await authService.signup(data);
     return Response.success(res, result, httpStatus.CREATED);
   } catch (exception) {
+    console.log(exception)
     next(exception);
   }
 };
 
-export const login = async (req, res) => {
-  const user = req.user;
-  const ipAddress = req.ip;
-  const result = await authService.login(user, ipAddress);
-  setTokenCookie(res, result.refreshToken);
-  // return the information including token as JSON
-  return Response.success(res, result, httpStatus.OK);
+export const login = async (req, res, next) => {
+  try {
+    const data = req.body;
+    console.log(data)
+    const user = await User.findOne({ email: data.email });
+    console.log(user)
+    if (!user) {
+      throw new Error(`User not found with this email or password`);
+    }
+    console.log(user.verifyPassword(data.password))
+    if (!user.verifyPassword(data.password)) {
+      throw new Error(`User not found with this email or password`);
+    }
+    const ipAddress = req.ip;
+    const result = await authService.login(user, ipAddress);
+    setTokenCookie(res, result.refreshToken);
+    // return the information including token as JSON
+    return Response.success(res, result, httpStatus.OK);
+  } catch (exception) {
+    console.log(exception)
+    next(exception);
+  }
 };
 
 export const logout = async (req, res, next) => {

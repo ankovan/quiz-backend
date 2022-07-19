@@ -5,5 +5,7 @@ backend/logs/*
 backend/uploads/*
 !backend/uploads/.gitkeep
 
+mongo_data/*
+
 node_modules/
 npm-debug.log
