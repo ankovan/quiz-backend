@@ -36,7 +36,7 @@ const router = express.Router();
  *       400:
  *          $ref: '#/responses/Error'
  */
-router.post('/', imageUpload, upload);
+router.post('/', AuthService.required, imageUpload, upload);
 /**
  * @swagger
  *

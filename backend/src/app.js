@@ -40,7 +40,7 @@ app.use(morgan(process.env.LOG_FORMAT || 'dev', { stream: logger.stream }));
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // parse requests of content-type - application/json
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: '500mb' }));
 
 // passport
 app.use(passport.initialize());
